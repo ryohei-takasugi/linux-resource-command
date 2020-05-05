@@ -5,26 +5,20 @@
 # 
 # =====================
 
-def text_to_array(command)
-  command_a = Array.new
-  len = 0
+def get_max_length(command)
+  max_len = 0
   command.each_line.with_index do |line, index|
-    len = line.chomp.split(" ").length if len < line.chomp.split(" ").length and index > 0
+    tmp = line.chomp.split(" ").length
+    max_len = tmp if max_len < tmp and index > 0
   end
-  command.each_line.with_index do |line, index|
-    command_a[index] = line.chomp.split(" ", len)
-  end
-  return command_a
+  return max_len
 end
 
-def convert_by_type(key, value)
-  result = Hash.new
-  case value
-  when /^[0-9]+$/   then result.store(key, value.to_i)
-  when /^[0-9]+\%$/ then result.store(key, value.delete("%").to_i)
-  else                   result.store(key, value)
-  end
-  return result
+def text_to_array(command)
+  command_a = Array.new
+  max_len = get_max_length(command)
+  command.each_line.with_index { |line, index| command_a[index] = line.chomp.split(" ", max_len) }
+  return command_a
 end
 
 def transpose_2d(data)
@@ -39,28 +33,39 @@ def transpose_2d(data)
   return result
 end
 
-def main_convert(key_lv1, key_lv2, target)
+def set_hash(key, value)
+  result = Hash.new
+  case value
+  when /^[0-9]+$/   then result.store(key, value.to_i)
+  when /^[0-9]+\%$/ then result.store(key, value.delete("%").to_i)
+  else                   result.store(key, value)
+  end
+  return result
+end
+
+def main_routine(key_lv1, key_lv2, target)
   result = Hash.new
   key_lv1.each_with_index do |lv1, i|
     tmp = Hash.new
     key_lv2.each_with_index do |lv2, j|
-      tmp.update(convert_by_type(lv2, target[i][j])) if target[i][j].nil? == false
+      tmp.update(set_hash(lv2, target[i][j])) if target[i][j].nil? == false
     end
-    result.store(lv1, tmp)
+    result.update(set_hash(lv1, tmp))
   end
   return result
 end
 
 def free(opt = nil)
   def feasible?(opt)
-    !(opt.include?("s") || opt.include?("c") || opt.include?("v") || opt.include?("help"))
+    return true if opt.nil?
+    return !(opt.include?("s") || opt.include?("c") || opt.include?("v") || opt.include?("help"))
   end
 
   def convert(free_a)
     key_lv1 = free_a[0]
     key_lv2 = free_a.map.with_index { |row| row[0] }[1..free_a.length]
     target  = transpose_2d(free_a.map.with_index { |row, index| row[1..row.length] }[1..free_a.length])
-    return main_convert(key_lv1, key_lv2, target)
+    return main_routine(key_lv1, key_lv2, target)
   end
 
   if feasible?(opt)
@@ -76,14 +81,15 @@ end
 
 def df(opt = nil)
   def feasible?(opt)
-    !(opt.include?("v") || opt.include?("help"))
+    return true if opt.nil?
+    return !(opt.include?("v") || opt.include?("help"))
   end
 
   def convert(df_a)
     key_lv1 = df_a.transpose.last[1..df_a.transpose.last.length]
     key_lv2 = df_a[0]
     target = df_a[1..df_a.length]
-    return main_convert(key_lv1, key_lv2, target)
+    return main_routine(key_lv1, key_lv2, target)
   end
 
   if feasible?(opt)

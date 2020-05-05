@@ -11,4 +11,4 @@ require "./core/unixcmd"
 # freeコマンドの結果をHash型で取得する
 puts JSON.pretty_generate(free("-lwmt"))
 # dfコマンドの結果をHash型で取得する
-puts JSON.pretty_generate(df("-aT"))
+puts JSON.pretty_generate(df())
