@@ -1,91 +1,98 @@
 # =====================
 # 
-# @os: CentOS Linux release 7.7.1908 (Core) 
+# @os:Ubuntu 18.04.4 LTS
 # @ruby-version: ruby-2.7.1
-# @version: 0.1
 # 
 # =====================
 
-module LinuxCommand
-  module CommonConvert
-    def self.text_to_array(command)
-      command_a = Array.new
-      command.each_line.with_index { |line, index| command_a[index] = line.split(" ") }
-      return command_a
-    end
+def text_to_array(command)
+  command_a = Array.new
+  len = 0
+  command.each_line.with_index do |line, index|
+    len = line.chomp.split(" ").length if len < line.chomp.split(" ").length and index > 0
+  end
+  command.each_line.with_index do |line, index|
+    command_a[index] = line.chomp.split(" ", len)
+  end
+  return command_a
+end
 
-    def self.convert_by_type(key, value)
-      tmp = Hash.new
-      case value
-      when /^[0-9]+$/
-        tmp.store(key, value.to_i)
-      when /^[0-9]+\%$/
-        tmp.store(key, value.delete("%").to_i)
-      else
-        tmp.store(key, value)
-      end
-      return tmp
+def convert_by_type(key, value)
+  result = Hash.new
+  case value
+  when /^[0-9]+$/   then result.store(key, value.to_i)
+  when /^[0-9]+\%$/ then result.store(key, value.delete("%").to_i)
+  else                   result.store(key, value)
+  end
+  return result
+end
+
+def transpose_2d(data)
+  len = 0
+  data.each { |d| len = d.length if len < d.length }
+  result = Array.new(len) { Array.new(data.length, nil) }
+  data.each_with_index do |line, i|
+    line.each_with_index do |d, j|
+      result[j][i] = data[i][j] if data[i][j].nil? == false
     end
   end
+  return result
+end
 
-  class Free
-    def get(opt = nil)
-      if feasible?(opt)
-        convert(CommonConvert::text_to_array(`free #{opt}`))
-      else
-        puts "error: This options cannot be used."
-        puts "       -s N, --seconds N  repeat printing every N seconds"
-        puts "       -c N, --count N    repeat printing N times, then exit"
-        puts "       --version          output version information and exit"
-        puts "       --help"
-      end
+def main_convert(key_lv1, key_lv2, target)
+  result = Hash.new
+  key_lv1.each_with_index do |lv1, i|
+    tmp = Hash.new
+    key_lv2.each_with_index do |lv2, j|
+      tmp.update(convert_by_type(lv2, target[i][j])) if target[i][j].nil? == false
     end
+    result.store(lv1, tmp)
+  end
+  return result
+end
 
-    def convert(free_a)
-      result_h = Hash.new
-      key = free_a.first
-      key.each_with_index do |head, col|
-        tmp = Hash.new
-        free_a.each_with_index do |data, row|
-          value = data[col + 1]
-          tmp.update(CommonConvert::convert_by_type(data.first, value)) if target_line?(value, row)
-        end
-        result_h.store(head, tmp)
-      end
-      return result_h
-    end
-
-    def feasible?(opt)
-      !(opt.include?("s") || opt.include?("c") || opt.include?("v") || opt.include?("help"))
-    end
-
-    def target_line?(value, index)
-      value.nil? == false and index != 0
-    end
+def free(opt = nil)
+  def feasible?(opt)
+    !(opt.include?("s") || opt.include?("c") || opt.include?("v") || opt.include?("help"))
   end
 
-  class Df
-    def get(opt = nil)
-      convert(CommonConvert::text_to_array(`df #{opt}`))
-    end
+  def convert(free_a)
+    key_lv1 = free_a[0]
+    key_lv2 = free_a.map.with_index { |row| row[0] }[1..free_a.length]
+    target  = transpose_2d(free_a.map.with_index { |row, index| row[1..row.length] }[1..free_a.length])
+    return main_convert(key_lv1, key_lv2, target)
+  end
 
-    def convert(df_a)
-      result_h = Hash.new
-      key = df_a.transpose.last[1..df_a.transpose.last.length]
-      key.each_with_index do |head, col|
-        tmp = Hash.new
-        df_a.each.select{ |l| l.last == head }.flatten.each_with_index do |data, row|
-          value = data
-          tmp.update(CommonConvert::convert_by_type(df_a.first[row], data)) if target_line?(value)
-        end
-        result_h.store(head, tmp)
-      end
-      return result_h
-    end
-
-    def target_line?(value)
-      value.nil? == false
-    end
+  if feasible?(opt)
+    convert(text_to_array(`free #{opt}`))
+  else
+    puts "error: This options cannot be used."
+    puts "       -s N, --seconds N  repeat printing every N seconds"
+    puts "       -c N, --count N    repeat printing N times, then exit"
+    puts "       --version          output version information and exit"
+    puts "       --help"
   end
 end
+
+def df(opt = nil)
+  def feasible?(opt)
+    !(opt.include?("v") || opt.include?("help"))
+  end
+
+  def convert(df_a)
+    key_lv1 = df_a.transpose.last[1..df_a.transpose.last.length]
+    key_lv2 = df_a[0]
+    target = df_a[1..df_a.length]
+    return main_convert(key_lv1, key_lv2, target)
+  end
+
+  if feasible?(opt)
+    convert(text_to_array(`df #{opt}`))
+  else
+    puts "error: This options cannot be used."
+    puts "       --version          output version information and exit"
+    puts "       --help"
+  end
+end
+
 
