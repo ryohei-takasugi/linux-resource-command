@@ -60,11 +60,13 @@ end
 # freeコマンドのメイン処理
 def free(opt = nil)
   # オプションコマンドが有効か判定する
-  def feasible?(opt)
+  def feasible?(opt, console_result)
     # オプションが無いならTrue
     return true if opt.nil?
     # オプションがあるなら、s c v help が含まれていない場合にTrueを返す
-    return !(opt.include?("s") || opt.include?("c") || opt.include?("v") || opt.include?("help"))
+    return false if (opt.include?("s") || opt.include?("c") || opt.include?("v") || opt.include?("help"))
+    # 実行結果に「Filesystem」が含まれている場合Trueを返す
+    return console_result.include?("Mem:")
   end
   # 変換のメイン処理
   def convert(free_a)
@@ -77,10 +79,12 @@ def free(opt = nil)
     # 行名称、列名称、使用量をハッシュ形式に変換する
     return main_routine(key_lv1, key_lv2, target)
   end
+  # コマンドを実行する
+  console_result = `free #{opt}`
   # オプションコマンドが有効か判定する
-  if feasible?(opt)
+  if feasible?(opt, console_result)
     # bashで実行した結果を配列に変換してから、ハッシュ型に変換する
-    convert(text_to_array(`free #{opt}`))
+    convert(text_to_array(console_result))
   else
     # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
     puts "error: This options cannot be used."
@@ -94,11 +98,13 @@ end
 # dfコマンドメイン処理
 def df(opt = nil)
   # オプションコマンドが有効か判定する
-  def feasible?(opt)
+  def feasible?(opt, console_result)
     # オプションが無いならTrue
     return true if opt.nil?
     # オプションがあるなら、v help が含まれていない場合にTrueを返す
-    return !(opt.include?("v") || opt.include?("help"))
+    return false if (opt.include?("v") || opt.include?("help"))
+    # 実行結果に「Filesystem」が含まれている場合Trueを返す
+    return console_result.include?("Filesystem")
   end
   # 変換のメイン処理
   def convert(df_a)
@@ -111,10 +117,12 @@ def df(opt = nil)
     # 行名称、列名称、使用量をハッシュ形式に変換する
     return main_routine(key_lv1, key_lv2, target)
   end
+  # コマンドを実行する
+  console_result = `df #{opt}`
   # オプションコマンドが有効か判定する
-  if feasible?(opt)
+  if feasible?(opt, console_result)
     # bashで実行した結果を配列に変換してから、ハッシュ型に変換する
-    convert(text_to_array(`df #{opt}`))
+    convert(text_to_array(console_result))
   else
     # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
     puts "error: This options cannot be used."
