@@ -5,24 +5,28 @@
 # 
 # =====================
 
-# 
-def get_max_length(command)
-  max_len = 0
+# 最大列数を取得する
+def get_max_columns(command)
+  max_number_of_columns = 0
   command.each_line.with_index do |line, index|
     tmp = line.chomp.split(" ").length
-    max_len = tmp if max_len < tmp and index > 0
+    max_number_of_columns = tmp if max_number_of_columns < tmp and index > 0
   end
-  return max_len
+  return max_number_of_columns
 end
 
-def text_to_array(command)
-  command_a = Array.new
-  max_len = get_max_length(command)
-  command.each_line.with_index { |line, index| command_a[index] = line.chomp.split(" ", max_len) }
-  return command_a
+# コマンドの結果（表形式）をネストした配列（１層目は行別、２層目は列別）に変換する
+def convert_text_to_array(command)
+  array_type_command = Array.new
+  max_number_of_columns = get_max_columns(command)
+  command.each_line.with_index do |line, index|
+    array_type_command[index] = line.chomp.split(" ", max_number_of_columns) 
+  end
+  return array_type_command
 end
 
-def transpose_2d(data)
+# Freeコマンド用の行列入れ替え
+def transpose_for_free(data)
   len = 0
   data.each { |d| len = d.length if len < d.length }
   result = Array.new(len) { Array.new(data.length, nil) }
@@ -34,7 +38,8 @@ def transpose_2d(data)
   return result
 end
 
-def set_hash(key, value)
+# ハッシュにデータを１つずつ入れる
+def set_to_hash(key, value)
   result = Hash.new
   case value
   when /^[0-9]+$/   then result.store(key, value.to_i)
@@ -44,15 +49,16 @@ def set_hash(key, value)
   return result
 end
 
-def main_routine(key_lv1, key_lv2, target)
+# メイン変換処理
+def convert(key_lv1, key_lv2, target)
   result = Hash.new
   key_lv1.each_with_index do |lv1, i|
     tmp = Hash.new
     key_lv2.each_with_index do |lv2, j|
       lv2 = lv2.chomp(":") if lv2.end_with?(":")
-      tmp.update(set_hash(lv2, target[i][j])) if target[i][j].nil? == false
+      tmp.update(set_to_hash(lv2, target[i][j])) if target[i][j].nil? == false
     end
-    result.update(set_hash(lv1, tmp))
+    result.update(set_to_hash(lv1, tmp))
   end
   return result
 end
@@ -69,22 +75,22 @@ def free(opt = nil)
     return console_result.include?("Mem:")
   end
   # 変換のメイン処理
-  def convert(free_a)
+  def convert_of_free(array_type_free)
     # freeコマンドの列名称（total、used、free、shared、buffers、cache、available）を取得する
-    key_lv1 = free_a[0]
+    key_lv1 = array_type_free[0]
     # freeコマンドの行名称（Mem、Low、Hight、Swap、Total）を取得する
-    key_lv2 = free_a.map.with_index { |row| row[0] }[1..free_a.length]
+    key_lv2 = array_type_free.map.with_index { |row| row[0] }[1..array_type_free.length]
     # 表形式だった各使用量をネストさせた配列形式に変換する
-    target  = transpose_2d(free_a.map.with_index { |row, index| row[1..row.length] }[1..free_a.length])
+    target  = transpose_for_free(array_type_free.map.with_index { |row, index| row[1..row.length] }[1..array_type_free.length])
     # 行名称、列名称、使用量をハッシュ形式に変換する
-    return main_routine(key_lv1, key_lv2, target)
+    return convert(key_lv1, key_lv2, target)
   end
   # コマンドを実行する
   console_result = `free #{opt}`
   # オプションコマンドが有効か判定する
   if feasible?(opt, console_result)
     # bashで実行した結果を配列に変換してから、ハッシュ型に変換する
-    convert(text_to_array(console_result))
+    convert_of_free(convert_text_to_array(console_result))
   else
     # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
     puts "error: This options cannot be used."
@@ -107,22 +113,22 @@ def df(opt = nil)
     return console_result.include?("Filesystem")
   end
   # 変換のメイン処理
-  def convert(df_a)
+  def convert_of_df(array_type_df)
     # dfコマンドの行名称（overlay tmpfs...）を取得する
-    key_lv1 = df_a.transpose.last[1..df_a.transpose.last.length]
+    key_lv1 = array_type_df.transpose.last[1..array_type_df.transpose.last.length]
     # dfコマンドの列名称（Filesystem 1K-blocks Used Available Use% Mounted on）を取得する
-    key_lv2 = df_a[0]
+    key_lv2 = array_type_df[0]
     # 表形式だった各使用量をネストさせた配列形式に変換する
-    target = df_a[1..df_a.length]
+    target = array_type_df[1..array_type_df.length]
     # 行名称、列名称、使用量をハッシュ形式に変換する
-    return main_routine(key_lv1, key_lv2, target)
+    return convert(key_lv1, key_lv2, target)
   end
   # コマンドを実行する
   console_result = `df #{opt}`
   # オプションコマンドが有効か判定する
   if feasible?(opt, console_result)
     # bashで実行した結果を配列に変換してから、ハッシュ型に変換する
-    convert(text_to_array(console_result))
+    convert_of_df(convert_text_to_array(console_result))
   else
     # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
     puts "error: This options cannot be used."
