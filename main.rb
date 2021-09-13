@@ -1,7 +1,7 @@
 # =====================
 # 
-# @os:Ubuntu 18.04.4 LTS
-# @ruby-version: ruby-2.7.1
+# @os:Ubuntu 21.04
+# @ruby-version: ruby-2.6.8
 # 
 # =====================
 
