@@ -1,57 +1,61 @@
 # =====================
 # 
 # @os:Ubuntu 21.04
-# @ruby-version: ruby-2.6.8
+# @ruby-version: ruby 2.7.4p191 (2021-07-07 revision a21a3b7d23) [aarch64-linux]
 # 
 # =====================
 
 require "json"
-require "./core/unixcmd"
+require "./core/lcmd"
 
 # freeコマンドの結果をHash型で取得する
+free = Free.new
+
 puts "-------------------------------------------"
 puts " free command hash (option null)"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(free)
+puts JSON.pretty_generate(free.get)
 
-# puts "-------------------------------------------"
-# puts " free command hash (option lwmt)"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(free("-lwmt"))
+puts "-------------------------------------------"
+puts " free command hash (option lwmt)"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(free.get("-lwmt"))
 
-# puts "-------------------------------------------"
-# puts " free command hash (option h)"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(free("-h"))
+puts "-------------------------------------------"
+puts " free command hash (option h)"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(free.get("-h"))
 
-# puts "-------------------------------------------"
-# puts " free command hash (option m) free mem only"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(free("-m")["free"]["Mem"])
+puts "-------------------------------------------"
+puts " free command hash (option m) free memory megabyte"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(free.get("-m")["free"]["Mem"])
 
 
 # dfコマンドの結果をHash型で取得する
+df = Df.new
+
 puts "-------------------------------------------"
 puts " df command hash  (option null)"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(df)
+puts JSON.pretty_generate(df.get)
 
-# puts "-------------------------------------------"
-# puts " df command hash  (option ahT)"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(df("-ahT"))
+puts "-------------------------------------------"
+puts " df command hash  (option ahT)"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(df.get("-ahT"))
 
-# puts "-------------------------------------------"
-# puts " df command hash  (option null) root only"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(df["/"])
+puts "-------------------------------------------"
+puts " df command hash  (option null) root only"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(df.get["/"])
 
-# puts "-------------------------------------------"
-# puts " df command hash  (option BM)"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(df("-BM"))
+puts "-------------------------------------------"
+puts " df command hash  (option BM)"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(df.get("-BM"))
 
-# puts "-------------------------------------------"
-# puts " df command hash  (option i)"
-# puts "-------------------------------------------"
-# puts JSON.pretty_generate(df("-i"))
+puts "-------------------------------------------"
+puts " df command hash  (option i)"
+puts "-------------------------------------------"
+puts JSON.pretty_generate(df.get("-i"))
