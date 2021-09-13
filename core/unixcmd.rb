@@ -16,29 +16,15 @@ def get_max_columns(console_result)
 end
 
 # コマンドの結果（表形式）をネストした配列（１層目は行別、２層目は列別）に変換する
-def convert_text_to_array(console_result)
+def convert_text_to_array(console_result, max_number_of_columns)
   array_type_command = Array.new
-  max_number_of_columns = get_max_columns(console_result)
   console_result.each_line.with_index do |line, index|
     array_type_command[index] = line.chomp.split(" ", max_number_of_columns) 
   end
   return array_type_command
 end
 
-# Freeコマンド用の行列入れ替え
-def transpose_for_free(datas)
-  length = 0
-  datas.each { |data| length = data.length if length < data.length }
-  result = Array.new(length) { Array.new(datas.length, nil) }
-  datas.each_with_index do |line, i|
-    line.each_with_index do |d, j|
-      result[j][i] = datas[i][j] unless datas[i][j].nil?
-    end
-  end
-  return result
-end
-
-# ハッシュにデータを１つずつ入れる(数字はinteger、％付きは％を消してinteger、それ以外は文字列)
+# ハッシュにデータを１つずつ入れる
 def set_to_hash(key, value)
   result = Hash.new
   case value
@@ -74,14 +60,31 @@ def free(opt = nil)
     # 実行結果に「Mem:」が含まれている場合Trueを返す
     return console_result.include?("Mem:")
   end
+  # Freeコマンド用の行列入れ替え
+  def transpose_for_free(datas, max_number_of_columns)
+    length = 0
+    result = Array.new(max_number_of_columns) { Array.new(datas.length, nil) }
+    datas.each_with_index do |line, i|
+      for j in 0..line.length do
+        result[j][i] = datas[i][j] unless datas[i][j].nil?
+      end
+    end
+    return result
+  end
   # 変換のメイン処理
-  def convert_of_free(array_type_free)
+  def convert_of_free(console_result)
+    # 範囲指定に使う列数の最大値を取得する
+    max_number_of_columns = get_max_columns(console_result)
+    # コンソールの表データを配列形式に変換する
+    array_type_free = convert_text_to_array(console_result, max_number_of_columns)
     # freeコマンドの列名称（total、used、free、shared、buffers、cache、available）を取得する
     key_lv1 = array_type_free[0]
     # freeコマンドの行名称（Mem、Low、Hight、Swap、Total）を取得する
-    key_lv2 = array_type_free.map.with_index { |row| row[0] }[1..array_type_free.length]
+    key_lv2 = array_type_free.map.with_index { |row| row[0] }[1..max_number_of_columns]
     # 表形式だった各使用量をネストさせた配列形式に変換する
-    value  = transpose_for_free(array_type_free.map.with_index { |row, index| row[1..row.length] }[1..array_type_free.length])
+    value  = transpose_for_free(
+      array_type_free.map.with_index { |row, index| row[1..row.length] }[1..max_number_of_columns],
+      max_number_of_columns)
     # 行名称、列名称、使用量をハッシュ形式に変換する
     return convert(key_lv1, key_lv2, value)
   end
@@ -90,7 +93,7 @@ def free(opt = nil)
   # オプションコマンドが有効か判定する
   if feasible?(opt, console_result)
     # シェルで実行した結果を配列に変換してから、ハッシュ型に変換する
-    convert_of_free(convert_text_to_array(console_result))
+    convert_of_free(console_result)
   else
     # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
     puts "error: This options cannot be used."
@@ -113,7 +116,11 @@ def df(opt = nil)
     return console_result.include?("Filesystem")
   end
   # 変換のメイン処理
-  def convert_of_df(array_type_df)
+  def convert_of_df(console_result)
+    # 範囲指定に使う列数の最大値を取得する
+    max_number_of_columns = get_max_columns(console_result)
+    # コンソールの表データを配列形式に変換する
+    array_type_df = convert_text_to_array(console_result, max_number_of_columns)
     # dfコマンドの行名称（overlay tmpfs...）を取得する
     key_lv1 = array_type_df.transpose.last[1..array_type_df.transpose.last.length]
     # dfコマンドの列名称（Filesystem 1K-blocks Used Available Use% Mounted on）を取得する
@@ -128,7 +135,7 @@ def df(opt = nil)
   # オプションコマンドが有効か判定する
   if feasible?(opt, console_result)
     # シェルで実行した結果を配列に変換してから、ハッシュ型に変換する
-    convert_of_df(convert_text_to_array(console_result))
+    convert_of_df(console_result)
   else
     # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
     puts "error: This options cannot be used."
