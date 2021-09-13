@@ -1,31 +1,30 @@
 # linux-resource-command
  Convert the result of resource command (df , free) to hash [Studying Github and Ruby]
 ```
-root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb 
 -------------------------------------------
  free command hash (option null)
 -------------------------------------------
 {
   "total": {
-    "Mem": 4029220,
+    "Mem": 2036540,
     "Swap": 1048572
   },
   "used": {
-    "Mem": 1267692,
-    "Swap": 0
+    "Mem": 868496,
+    "Swap": 334096
   },
   "free": {
-    "Mem": 1229580,
-    "Swap": 1048572
+    "Mem": 405708,
+    "Swap": 714476
   },
   "shared": {
-    "Mem": 409184
+    "Mem": 146932
   },
   "buff/cache": {
-    "Mem": 1531948
+    "Mem": 762336
   },
   "available": {
-    "Mem": 2077600
+    "Mem": 932772
   }
 }
 -------------------------------------------
@@ -33,69 +32,43 @@ root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb
 -------------------------------------------
 {
   "total": {
-    "Mem": 3934,
-    "Low": 3934,
+    "Mem": 1988,
+    "Low": 1988,
     "High": 0,
     "Swap": 1023,
-    "Total": 4958
+    "Total": 3012
   },
   "used": {
-    "Mem": 1237,
-    "Low": 2733,
+    "Mem": 848,
+    "Low": 1592,
     "High": 0,
-    "Swap": 0,
-    "Total": 1237
+    "Swap": 326,
+    "Total": 1174
   },
   "free": {
-    "Mem": 1201,
-    "Low": 1201,
+    "Mem": 396,
+    "Low": 396,
     "High": 0,
-    "Swap": 1023,
-    "Total": 2225
+    "Swap": 697,
+    "Total": 1093
   },
   "shared": {
-    "Mem": 399
+    "Mem": 143
   },
   "buffers": {
-    "Mem": 323
+    "Mem": 82
   },
   "cache": {
-    "Mem": 1172
+    "Mem": 661
   },
   "available": {
-    "Mem": 2029
+    "Mem": 910
   }
 }
 -------------------------------------------
- free command hash (option h)
+ free command hash (option m) free memory megabyte
 -------------------------------------------
-{
-  "total": {
-    "Mem": "3.8Gi",
-    "Swap": "1.0Gi"
-  },
-  "used": {
-    "Mem": "1.2Gi",
-    "Swap": "0B"
-  },
-  "free": {
-    "Mem": "1.2Gi",
-    "Swap": "1.0Gi"
-  },
-  "shared": {
-    "Mem": "399Mi"
-  },
-  "buff/cache": {
-    "Mem": "1.5Gi"
-  },
-  "available": {
-    "Mem": "2.0Gi"
-  }
-}
--------------------------------------------
- free command hash (option m) free mem only
--------------------------------------------
-1200
+395
 -------------------------------------------
  df command hash  (option null)
 -------------------------------------------
@@ -103,9 +76,9 @@ root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb
   "/": {
     "Filesystem": "overlay",
     "1K-blocks": 61255492,
-    "Used": 7027220,
-    "Available": 51086948,
-    "Use%": 13,
+    "Used": 3106012,
+    "Available": 55008156,
+    "Use%": 6,
     "Mounted on": "/"
   },
   "/dev": {
@@ -118,9 +91,9 @@ root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb
   },
   "/sys/fs/cgroup": {
     "Filesystem": "tmpfs",
-    "1K-blocks": 2014608,
+    "1K-blocks": 1018268,
     "Used": 0,
-    "Available": 2014608,
+    "Available": 1018268,
     "Use%": 0,
     "Mounted on": "/sys/fs/cgroup"
   },
@@ -135,59 +108,16 @@ root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb
   "/etc/hosts": {
     "Filesystem": "/dev/vda1",
     "1K-blocks": 61255492,
-    "Used": 7027220,
-    "Available": 51086948,
-    "Use%": 13,
+    "Used": 3106012,
+    "Available": 55008156,
+    "Use%": 6,
     "Mounted on": "/etc/hosts"
   },
-  "/proc/acpi": {
-    "Filesystem": "tmpfs",
-    "1K-blocks": 2014608,
-    "Used": 0,
-    "Available": 2014608,
-    "Use%": 0,
-    "Mounted on": "/proc/acpi"
-  },
   "/sys/firmware": {
     "Filesystem": "tmpfs",
-    "1K-blocks": 2014608,
+    "1K-blocks": 1018268,
     "Used": 0,
-    "Available": 2014608,
-    "Use%": 0,
-    "Mounted on": "/sys/firmware"
-  }
-}
--------------------------------------------
- df command hash  (option ahT)
--------------------------------------------
-{
-  "/": {
-    "Filesystem": "overlay",
-    "Type": "overlay",
-    "Size": "59G",
-    "Used": "6.8G",
-    "Avail": "49G",
-    "Use%": 13,
-    "Mounted on": "/"
-  },
-  "/proc": {
-    "Filesystem": "proc",
-    "Type": "proc",
-    "Size": 0,
-    "Used": 0,
-    "Avail": 0,
-    "Use%": "-",
-    "Mounted on": "/proc"
-  },
-  "/dev": {
-      (省略)
-  },
-  "/sys/firmware": {
-    "Filesystem": "tmpfs",
-    "Type": "tmpfs",
-    "Size": "2.0G",
-    "Used": 0,
-    "Avail": "2.0G",
+    "Available": 1018268,
     "Use%": 0,
     "Mounted on": "/sys/firmware"
   }
@@ -197,72 +127,11 @@ root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb
 -------------------------------------------
 {
   "Filesystem": "overlay",
-  "1K-blocks": 61255492,
-  "Used": 7027220,
-  "Available": 51086948,
-  "Use%": 13,
+  "1M-blocks": "59820M",
+  "Used": "3034M",
+  "Available": "53719M",
+  "Use%": 6,
   "Mounted on": "/"
-}
--------------------------------------------
- df command hash  (option BM)
--------------------------------------------
-{
-  "/": {
-    "Filesystem": "overlay",
-    "1M-blocks": "59820M",
-    "Used": "6863M",
-    "Available": "49890M",
-    "Use%": 13,
-    "Mounted on": "/"
-  },
-  "/dev": {
-    "Filesystem": "tmpfs",
-    "1M-blocks": "64M",
-    "Used": "0M",
-    "Available": "64M",
-    "Use%": 0,
-    "Mounted on": "/dev"
-  },
-  "/sys/fs/cgroup": {
-    "Filesystem": "tmpfs",
-    "1M-blocks": "1968M",
-    "Used": "0M",
-    "Available": "1968M",
-    "Use%": 0,
-    "Mounted on": "/sys/fs/cgroup"
-  },
-  "/dev/shm": {
-    "Filesystem": "shm",
-    "1M-blocks": "64M",
-    "Used": "0M",
-    "Available": "64M",
-    "Use%": 0,
-    "Mounted on": "/dev/shm"
-  },
-  "/etc/hosts": {
-    "Filesystem": "/dev/vda1",
-    "1M-blocks": "59820M",
-    "Used": "6863M",
-    "Available": "49890M",
-    "Use%": 13,
-    "Mounted on": "/etc/hosts"
-  },
-  "/proc/acpi": {
-    "Filesystem": "tmpfs",
-    "1M-blocks": "1968M",
-    "Used": "0M",
-    "Available": "1968M",
-    "Use%": 0,
-    "Mounted on": "/proc/acpi"
-  },
-  "/sys/firmware": {
-    "Filesystem": "tmpfs",
-    "1M-blocks": "1968M",
-    "Used": "0M",
-    "Available": "1968M",
-    "Use%": 0,
-    "Mounted on": "/sys/firmware"
-  }
 }
 -------------------------------------------
  df command hash  (option i)
@@ -271,56 +140,48 @@ root@02c0bfcf7d4e:~/unixcmd-by-ruby# ruby main.rb
   "/": {
     "Filesystem": "overlay",
     "Inodes": 3907584,
-    "IUsed": 258001,
-    "IFree": 3649583,
-    "IUse%": 7,
+    "IUsed": 114626,
+    "IFree": 3792958,
+    "IUse%": 3,
     "Mounted on": "/"
   },
   "/dev": {
     "Filesystem": "tmpfs",
-    "Inodes": 503652,
+    "Inodes": 254567,
     "IUsed": 17,
-    "IFree": 503635,
+    "IFree": 254550,
     "IUse%": 1,
     "Mounted on": "/dev"
   },
   "/sys/fs/cgroup": {
     "Filesystem": "tmpfs",
-    "Inodes": 503652,
+    "Inodes": 254567,
     "IUsed": 15,
-    "IFree": 503637,
+    "IFree": 254552,
     "IUse%": 1,
     "Mounted on": "/sys/fs/cgroup"
   },
   "/dev/shm": {
     "Filesystem": "shm",
-    "Inodes": 503652,
+    "Inodes": 254567,
     "IUsed": 1,
-    "IFree": 503651,
+    "IFree": 254566,
     "IUse%": 1,
     "Mounted on": "/dev/shm"
   },
   "/etc/hosts": {
     "Filesystem": "/dev/vda1",
     "Inodes": 3907584,
-    "IUsed": 258001,
-    "IFree": 3649583,
-    "IUse%": 7,
+    "IUsed": 114626,
+    "IFree": 3792958,
+    "IUse%": 3,
     "Mounted on": "/etc/hosts"
-  },
-  "/proc/acpi": {
-    "Filesystem": "tmpfs",
-    "Inodes": 503652,
-    "IUsed": 1,
-    "IFree": 503651,
-    "IUse%": 1,
-    "Mounted on": "/proc/acpi"
   },
   "/sys/firmware": {
     "Filesystem": "tmpfs",
-    "Inodes": 503652,
+    "Inodes": 254567,
     "IUsed": 1,
-    "IFree": 503651,
+    "IFree": 254566,
     "IUse%": 1,
     "Mounted on": "/sys/firmware"
   }

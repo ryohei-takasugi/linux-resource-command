@@ -22,11 +22,6 @@ puts "-------------------------------------------"
 puts JSON.pretty_generate(free.get("-lwmt"))
 
 puts "-------------------------------------------"
-puts " free command hash (option h)"
-puts "-------------------------------------------"
-puts JSON.pretty_generate(free.get("-h"))
-
-puts "-------------------------------------------"
 puts " free command hash (option m) free memory megabyte"
 puts "-------------------------------------------"
 puts JSON.pretty_generate(free.get("-m")["free"]["Mem"])
@@ -41,19 +36,9 @@ puts "-------------------------------------------"
 puts JSON.pretty_generate(df.get)
 
 puts "-------------------------------------------"
-puts " df command hash  (option ahT)"
-puts "-------------------------------------------"
-puts JSON.pretty_generate(df.get("-ahT"))
-
-puts "-------------------------------------------"
 puts " df command hash  (option null) root only"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(df.get["/"])
-
-puts "-------------------------------------------"
-puts " df command hash  (option BM)"
-puts "-------------------------------------------"
-puts JSON.pretty_generate(df.get("-BM"))
+puts JSON.pretty_generate(df.get("-BM")["/"])
 
 puts "-------------------------------------------"
 puts " df command hash  (option i)"
