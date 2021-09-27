@@ -9,38 +9,38 @@ require "json"
 require "./core/lcmd"
 
 # freeコマンドの結果をHash型で取得する
-free = Free.new
+include Free
 
 puts "-------------------------------------------"
 puts " free command hash (option null)"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(free.get)
+puts JSON.pretty_generate(free)
 
 puts "-------------------------------------------"
 puts " free command hash (option lwmt)"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(free.get("-lwmt"))
+puts JSON.pretty_generate(free("-lwmt"))
 
 puts "-------------------------------------------"
 puts " free command hash (option m) free memory megabyte"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(free.get("-m")["free"]["Mem"])
+puts JSON.pretty_generate(free("-m")["free"]["Mem"])
 
 
 # dfコマンドの結果をHash型で取得する
-df = Df.new
+include Df
 
 puts "-------------------------------------------"
 puts " df command hash  (option null)"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(df.get)
+puts JSON.pretty_generate(df)
 
 puts "-------------------------------------------"
 puts " df command hash  (option null) root only"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(df.get("-BM")["/"])
+puts JSON.pretty_generate(df("-BM")["/"])
 
 puts "-------------------------------------------"
 puts " df command hash  (option i)"
 puts "-------------------------------------------"
-puts JSON.pretty_generate(df.get("-i"))
+puts JSON.pretty_generate(df("-i"))

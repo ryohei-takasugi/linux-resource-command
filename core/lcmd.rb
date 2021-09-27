@@ -122,9 +122,9 @@ end
 
 
 # freeコマンド
-class Free
+module Free
   include FreeModule
-  def get(opt = nil)
+  def free(opt = nil)
     # コマンドを実行する
     console_result = `free #{opt}`
     # オプションコマンドが有効か判定する
@@ -143,9 +143,9 @@ class Free
 end
 
 # dfコマンド
-class Df
+module Df
   include DfModule
-  def get(opt = nil)
+  def df(opt = nil)
     # コマンドを実行する
     console_result = `df #{opt}`
     # オプションコマンドが有効か判定する
