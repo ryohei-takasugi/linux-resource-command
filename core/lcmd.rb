@@ -4,6 +4,8 @@
 # @ruby-version: ruby 2.7.4p191 (2021-07-07 revision a21a3b7d23) [aarch64-linux]
 # 
 # =====================
+
+# DFコマンドとFreeコマンドに共通する処理
 module CommonModule
   # 最大列数を取得する
   def get_max_columns(console_result)
@@ -50,6 +52,7 @@ module CommonModule
   end
 end
 
+# freeコマンド専用のメソッド
 module FreeModule
   include CommonModule
   # オプションコマンドが有効か判定する
@@ -92,6 +95,7 @@ module FreeModule
   end
 end
 
+# Dfコマンド専用のメソッド
 module DfModule
   include CommonModule
   # オプションコマンドが有効か判定する
