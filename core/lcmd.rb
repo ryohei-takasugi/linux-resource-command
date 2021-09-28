@@ -4,9 +4,18 @@
 # @ruby-version: ruby 2.7.4p191 (2021-07-07 revision a21a3b7d23) [aarch64-linux]
 # 
 # =====================
+# TODO: メソッドの上部に引数などのコメントをつける
+# TODO: 例外処理（コマンドの実行エラーで手動例外発生か？）を作る
+# TODO: RSpecでテストケース作る
+# TODO: Gemfileを開発環境、テスト環境、本番環境に分ける
+# TODO: READMEの説明を増やす
+# TODO: dfとfreeを分離してgemを作る
+# TODO: 全体cpu使用率、uptime、ps版を取得するケースを検討するかも？
+# =====================
 
 # DFコマンドとFreeコマンドに共通する処理
 module CommonModule
+  private
   # 最大列数を取得する
   def get_max_columns(console_result)
     max_number_of_columns = 0
@@ -55,6 +64,7 @@ end
 # freeコマンド専用のメソッド
 module FreeModule
   include CommonModule
+  private
   # オプションコマンドが有効か判定する
   def feasible?(opt, console_result)
     # オプションが無いならTrue
@@ -98,6 +108,7 @@ end
 # Dfコマンド専用のメソッド
 module DfModule
   include CommonModule
+  private
   # オプションコマンドが有効か判定する
   def feasible?(opt, console_result)
     # オプションが無いならTrue
@@ -137,7 +148,7 @@ module Free
       convert_of_free(console_result)
     else
       # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
-      puts "error: This options cannot be used."
+      puts "error: This options cannot be used by linuxcmd-by-ruby."
       puts "       -s N, --seconds N  repeat printing every N seconds"
       puts "       -c N, --count N    repeat printing N times, then exit"
       puts "       --version          output version information and exit"
@@ -158,7 +169,7 @@ module Df
       convert_of_df(console_result)
     else
       # オプションに無効文字が含まれる場合、エラーメッセージを出して終了する
-      puts "error: This options cannot be used."
+      puts "error: This options cannot be used by linuxcmd-by-ruby."
       puts "       --version          output version information and exit"
       puts "       --help"
     end
