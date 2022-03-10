@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  ruby:
+    container_name: ruby
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: "./"
+        target: "/root/projects"
